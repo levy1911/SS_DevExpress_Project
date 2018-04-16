@@ -1,5 +1,3 @@
-
-
 from subprocess import Popen, PIPE
 
 file_path = 'C:\SUAgent\dist\SUAgent.jar'
@@ -34,15 +32,15 @@ with Popen(['java', '-jar', file_path], stdout=PIPE, bufsize=1, universal_newlin
     modules_tmp = []
     modules_per_env = []
     second_analyze = []
+    affected_environments = []
 
     # Divided list/dictionaries operation:
     for key, v in env_dict.items():  # range of all dicts
         candidates_final = []
         candidates_tmp = []
-        print(['\n\nENV: \n'])
-        print('#####################\n')
-        print(key)
-        print('#####################\n')
+
+        print('\nENV: '+str(key)+'\n\n')
+
         primary_key = 0
         for i in v:
             i.append(primary_key)
@@ -59,12 +57,22 @@ with Popen(['java', '-jar', file_path], stdout=PIPE, bufsize=1, universal_newlin
             if (i[3] not in modules_per_env) and ('DevExpress' not in i[3]):
                 v.remove(i)
 
-
-
+        # All DevExpress -ends positions
+        print("DevExpress versions on environment: ")
         analyzed_module_ends_list = [x for x in v if analyze_module in x[3]]
-        for item in analyzed_module_ends_list:
-            print(item)
 
+        analyzed_module_ends_list_unique = []
+        for item in analyzed_module_ends_list:
+            analyzed_module_ends_list_unique.append(str(item[3]) + ' ' + str(item[4]))
+
+        analyzed_module_ends_list_unique = set(analyzed_module_ends_list_unique)
+        for item in analyzed_module_ends_list_unique:
+            print(' - ' + str(item))
+        if len(analyzed_module_ends_list_unique) > 1:
+            affected_environments.append(str(key)+'('+str(len(analyzed_module_ends_list_unique))+')')
+        print('\n')
+
+        print('Gene modules indirect connections with DevExpress: \n')
         tmp = []
         tmp2 = []
         for item in analyzed_module_ends_list:
@@ -98,35 +106,37 @@ with Popen(['java', '-jar', file_path], stdout=PIPE, bufsize=1, universal_newlin
 
 
         ##########STOP############
-        tmp2 = []
-        for item in list_2:
-            tmp = [x + [item[5], item[6], item[7]] for x in v if item[1] in x[3]]
-            tmp2.append(tmp)
+        if list_2 is not None:
+            tmp2 = []
+            for item in list_2:
+                tmp = [x + [item[5], item[6], item[7]] for x in v if item[1] in x[3]]
+                tmp2.append(tmp)
 
-        # make one list
-        list_3 = []
-        for x in tmp2:
-            for item in x:
-                if item[1] in gene_modules:
-                    candidates_tmp.append(item)
-                else:
-                    list_3.append(item)
+            # make one list
+            list_3 = []
+            for x in tmp2:
+                for item in x:
+                    if item[1] in gene_modules:
+                        candidates_tmp.append(item)
+                    else:
+                        list_3.append(item)
 
         ##########STOP############
         ##########START#############
-        tmp2 = []
-        for item in list_3:
-            tmp = [x + [item[5], item[6], item[7], item[8]] for x in v if item[1] in x[3]]
-            tmp2.append(tmp)
+        if list_3 is not None:
+            tmp2 = []
+            for item in list_3:
+                tmp = [x + [item[5], item[6], item[7], item[8]] for x in v if item[1] in x[3]]
+                tmp2.append(tmp)
 
-        # make one list
-        list_4 = []
-        for x in tmp2:
-            for item in x:
-                if item[1] in gene_modules:
-                    candidates_tmp.append(item)
-                else:
-                    list_4.append(item)
+            # make one list
+            list_4 = []
+            for x in tmp2:
+                for item in x:
+                    if item[1] in gene_modules:
+                        candidates_tmp.append(item)
+                    else:
+                        list_4.append(item)
 
         ##########STOP############
 
@@ -158,9 +168,11 @@ with Popen(['java', '-jar', file_path], stdout=PIPE, bufsize=1, universal_newlin
                 elif 'DevExpress' in string[0][3]:
                     final_string += ' --> ' + str(string[0][3]) + '[ver: ' + (str(string[0][4]))+']'
             print(final_string)
-
-
-
+        print('------------------------------------------------------------------------------------------------')
+    print('######################################################################')
+    print('Affected environments list (and how many different versions is detected):')
+    print(', '.join(affected_environments))
+    print('\n######################################################################')
 
 
 
