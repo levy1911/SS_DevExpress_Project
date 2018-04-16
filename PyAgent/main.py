@@ -7,6 +7,8 @@ analyze_module = 'DevExpress'
 gene_modules = ['SoftMol', 'SoftDxp', 'SoftFlw', 'SoftBio', 'SoftCtg', 'SoftAcc', 'SoftHla',
                 'SoftBioChem', 'SoftPathDx']
 
+line_length = 150
+
 with Popen(['java', '-jar', file_path], stdout=PIPE, bufsize=1, universal_newlines=True) as p:
     env_name = ''
     env_dict = {}
@@ -39,8 +41,6 @@ with Popen(['java', '-jar', file_path], stdout=PIPE, bufsize=1, universal_newlin
         candidates_final = []
         candidates_tmp = []
 
-        print('\nENV: '+str(key)+'\n\n')
-
         primary_key = 0
         for i in v:
             i.append(primary_key)
@@ -57,14 +57,27 @@ with Popen(['java', '-jar', file_path], stdout=PIPE, bufsize=1, universal_newlin
             if (i[3] not in modules_per_env) and ('DevExpress' not in i[3]):
                 v.remove(i)
 
+
         # All DevExpress -ends positions
-        print("DevExpress versions on environment: ")
         analyzed_module_ends_list = [x for x in v if analyze_module in x[3]]
 
+        # Not displaying environments with no DevExpress:
+        if len(analyzed_module_ends_list) == 0:
+            break
+
+        gene_modules_per_env = [x for x in modules_per_env if x in gene_modules]
+
+        print('\nENVIRONMENT: ' + str(key) + '\n\n')
+
+
         analyzed_module_ends_list_unique = []
+
+        print('Involved modules:')
         for item in analyzed_module_ends_list:
             analyzed_module_ends_list_unique.append(str(item[3]) + ' ' + str(item[4]))
+            print(' - ' +str(item[1]) + ' ' + str(item[2]))
 
+        print("\nDevExpress versions on environment: ")
         analyzed_module_ends_list_unique = set(analyzed_module_ends_list_unique)
         for item in analyzed_module_ends_list_unique:
             print(' - ' + str(item))
@@ -72,7 +85,11 @@ with Popen(['java', '-jar', file_path], stdout=PIPE, bufsize=1, universal_newlin
             affected_environments.append(str(key)+'('+str(len(analyzed_module_ends_list_unique))+')')
         print('\n')
 
-        print('Gene modules indirect connections with DevExpress: \n')
+        print('Gene modules on Environments:\n')
+        for item in gene_modules_per_env:
+            print(' - '+ str(item))
+
+        print('\nGene modules indirect connections with DevExpress: \n')
         tmp = []
         tmp2 = []
         for item in analyzed_module_ends_list:
@@ -168,11 +185,11 @@ with Popen(['java', '-jar', file_path], stdout=PIPE, bufsize=1, universal_newlin
                 elif 'DevExpress' in string[0][3]:
                     final_string += ' --> ' + str(string[0][3]) + '[ver: ' + (str(string[0][4]))+']'
             print(final_string)
-        print('------------------------------------------------------------------------------------------------')
-    print('######################################################################')
+        print('-'*line_length)
+    print('#'*line_length)
     print('Affected environments list (and how many different versions is detected):')
     print(', '.join(affected_environments))
-    print('\n######################################################################')
+    print('\n'+'#'*line_length)
 
 
 
