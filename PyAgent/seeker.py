@@ -10,7 +10,7 @@ class Seeker:
     # Final results output
     final_output = ''
 
-    def seek(self, analyze_module='DevExpress', output_filename='dependency_report.txt', file_path='SUAgent.jar'):
+    def seek(self, analyze_module='DevExpress', output_filename='dependency_report.txt', file_path='C:\SUAgent\dist\SUAgent.jar'):
         '''
 
         :param analyze_module: Which module needs to be searched for
@@ -79,18 +79,20 @@ class Seeker:
                         analyzed_module_ends_list_unique.append(str(item[3]) + ' ' + str(item[4]))
                         self.final_output += ' - ' + str(item[1]) + ' ' + str(item[2]) + '\n'
 
+                    '''
+                    # Obsolete
                     self.final_output += "\nDevExpress versions on environment: \n\n"
                     analyzed_module_ends_list_unique = set(analyzed_module_ends_list_unique)
                     for item in analyzed_module_ends_list_unique:
                         self.final_output += ' - ' + str(item) + '\n'
                     if len(analyzed_module_ends_list_unique) > 1:
                         affected_environments.append(str(key)+'('+str(len(analyzed_module_ends_list_unique))+')')
-
+                    '''
                     self.final_output += '\nGene modules on Environments:\n\n'
                     for item in gene_modules_per_env:
                         self.final_output += ' - ' + str(item) + '\n'
 
-                    self.final_output += '\nGene modules indirect connections with DevExpress: \n\n'
+                    # Main algorithm
                     tmp = []
                     tmp2 = []
                     for item in analyzed_module_ends_list:
@@ -167,6 +169,30 @@ class Seeker:
                         candidates_final.append(inside_list)
                         inside_list = []
 
+                    # Build list of actuall DevExpress version (linked to gene)
+                    dev_version_linked_to_gene_tmp = []
+                    for dev in analyzed_module_ends_list:
+                        for candidate in candidates_final:
+                            if dev in candidate:
+                                dev_version_linked_to_gene_tmp.append(dev)
+                    dev_version_linked_to_gene = []
+
+                    for x in dev_version_linked_to_gene_tmp:
+                        list_el = str(x[3] + ' ' + x[4])
+                        dev_version_linked_to_gene.append(list_el)
+
+                    for el in set(dev_version_linked_to_gene):
+                        print(el)
+
+                    self.final_output += "\nDevExpress versions on environment: \n\n"
+                    for item in set(dev_version_linked_to_gene):
+                        self.final_output += ' - ' + str(item) + '\n'
+                    self.final_output += '\n'
+                    if len(set(dev_version_linked_to_gene)) > 1:
+                        affected_environments.append(str(key) + '(' + str(len(set(dev_version_linked_to_gene))) + ')')
+
+                    self.final_output += '\nGene modules indirect connections with DevExpress: \n\n'
+
                     for i in candidates_final:
                         #Make string
                         indexes_list = i[0][5:]
@@ -190,6 +216,7 @@ class Seeker:
             self.final_output += '\n'+'#'*self.line_length
 
         sample_file = open(output_filename, "w")
+        #print(self.final_output)
         sample_file.write(self.final_output)
         return output_filename
 

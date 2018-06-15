@@ -22,12 +22,12 @@ public class SUAgent {
     
     
     // jdbc Connection
-    private static String dbURL = "jdbc:derby://scclis:1527/softupdate;user=upd;password=sccupd27245";
+    private static String dbURL = "jdbc:derby://scclis:1527/softupdate;user=upd;password=sccupd31368";
     private static Connection conn = null;
     private static Statement stmt = null;
     private static String query = "select e.name as env_name, a.name as apl_name, a.version as apl_ver, da.name as dep_name, da.version as dep_ver\n" +
                                   "from environments e, ocd_apps a, ocd_dependencies d, ocd_apps da\n" +
-                                  "where e.name in ('Q409','Q44','Q356') and a.env_id_fk = e.env_id_pk and d.ocd_id_fk = a.ocd_id_pk and da.env_related_id = d.env_related_id\n" +
+                                  "where e.name in ('Q108') and a.env_id_fk = e.env_id_pk and d.ocd_id_fk = a.ocd_id_pk and da.env_related_id = d.env_related_id\n" +
                                   "order by e.name, a.name, a.version, da.name, da.version";
     private static String query_env = "select distinct(environments.name) from environments";
     
