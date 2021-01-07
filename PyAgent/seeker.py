@@ -192,7 +192,7 @@ class Seeker:
                     for item in set(dev_version_linked_to_gene):
                         self.final_output += ' - ' + str(item) + '\n'
                     self.final_output += '\n'
-                    if len(set(dev_version_linked_to_gene)) > 1:
+                    if len(set(dev_version_linked_to_gene)) >= 1:
                         affected_environments.append(str(key) + '(' + str(len(set(dev_version_linked_to_gene))) + ')')
 
                     self.final_output += '\nGene modules indirect connections with DevExpress: \n\n'
@@ -218,7 +218,7 @@ class Seeker:
                     self.final_output += '\n\nNO GENE MODULES\n\n'
                     self.final_output += '-' * self.line_length + '\n'
                 # Build list of 'essentials' for second file (in order to be able to sort)
-                if len(set(dev_version_linked_to_gene)) > 1:
+                if len(set(dev_version_linked_to_gene)) >= 1:
                     second_tmp_list = [self.second_client_name, self.second_env_name, self.second_gene_ver,
                                        set(dev_version_linked_to_gene)]
                     self.second_output_list.append(second_tmp_list)
