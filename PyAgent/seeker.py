@@ -83,7 +83,9 @@ class Seeker:
 
                     gene_modules_per_env = [x for x in modules_per_env if x in self.gene_modules]
 
-                    self.final_output += '\nENVIRONMENT: ' + str(key) + '\n\n'
+                    self.final_output += '\nENVIRONMENT: ' + str(key) + '\n'
+
+                    self.final_output += '\nCLIENT: ' + self.second_client_name + '\n\n'
 
                     # Get Environment name for second file
                     self.second_env_name = str(key)
